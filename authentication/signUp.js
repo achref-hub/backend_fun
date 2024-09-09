@@ -11,11 +11,22 @@ module.exports = async function (req, res) {
     const sql = `INSERT INTO user (id, full_name, email, password) VALUES (?, ?, ?, ?)`;
 
     try {
+      
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         // Get a connection from the pool
         const connection = await pool.getConnection();
+
+        // Check if email already exists
+          const checkEmail = `SELECT email FROM user WHERE email = ?`;
+          const [rows] = await connection.execute(checkEmail, [email]);
+          if (rows.length > 0) {
+              return res.status(400).json({
+                  success: false,
+                  message: 'Email already exists'
+              });
+          };
 
         // Insert the user into the database
         await connection.execute(sql, [id, full_name, email, hashedPassword]);
