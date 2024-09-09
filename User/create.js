@@ -9,7 +9,6 @@ module.exports = async function (req, res){
     try{
         const saltRounds = 10; 
         const hashedPassword = await bcrypt.hash(password, saltRounds);
-        console.log("hashedPassword",hashedPassword);
          // Get a connection from the pool
          const connection = await pool.getConnection();
          const [result] = await connection.execute(sql, [id, full_name, email, hashedPassword]);

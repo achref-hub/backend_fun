@@ -1,5 +1,8 @@
 const bcrypt = require('bcrypt');
 const { pool } = require('../app');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 module.exports = async function (req, res) {
     const { email, password } = req.body;
@@ -10,6 +13,7 @@ module.exports = async function (req, res) {
             message: 'Email and password are required'
         });
     }
+    
 
     try {
         // Get a connection from the pool
@@ -32,9 +36,6 @@ module.exports = async function (req, res) {
         const user = rows[0];
         // Compare the provided password with the stored hashed password
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log("password",password);
-        console.log("user.password",user.password);
-        console.log(isMatch);
 
         if (!isMatch) {
             return res.status(401).json({
@@ -42,10 +43,18 @@ module.exports = async function (req, res) {
                 message: 'Invalid email or password'
             });
         }
+         // Generate JWT Token upon successful sign-in
+         const token = jwt.sign(
+            { id: user.id, email: user.email },
+            JWT_SECRET,
+            { expiresIn: '2h' } 
+        );
+
 
         return res.status(200).json({
             success: true,
             message: 'Sign-in successful',
+            token,
             user: {
                 id: user.id,
                 full_name: user.full_name,
