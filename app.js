@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
+const importCSVToDatabase = require('./ManageData/importCsv');
 dotenv.config();
 // Middleware to parse JSON
 app.use(express.json());
@@ -36,10 +37,23 @@ app.use("/api/user", require("./routes/user"));
 app.use("/api/authentication", require("./routes/authentification"));
 
 
+
 app.get('/', (req, res) =>{
     res.send("hello")
 
 });
+
+const csvFilePath = './stats.csv';
+const tableName = 'stats_table';   
+
+importCSVToDatabase(csvFilePath, pool, tableName, (err, results) => { 
+    if (err) {
+        console.error('Error during CSV import:', err);
+    } else {
+        console.log('CSV import completed successfully', results);
+    }
+});
+
 const port = 3000;
 app.listen(port , ()=>{
     console.log(`backend runing on port ${port}`);
