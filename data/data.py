@@ -389,3 +389,87 @@ merged_df['Black-Friday'].fillna(0, inplace=True)
 
 # Fusionner avec le DataFrame des comptages de la Saint-Valentin pour inclure tous les gouvernorats
 merged_df = pd.merge(merged_df, count_by_governorate_valentine, on='Gouvernorat', how='left')
+
+# Remplacer les valeurs manquantes (gouvernorats sans colis pendant la période de la Saint-Valentin) par 0
+merged_df['Saint-Valentin'].fillna(0, inplace=True)
+
+# Filtrer les données pour la période des Soldes d'hiver (1 février - 13 mars)
+df_soldes_hiver = df[((df['Jour'] >= 1) & (df['Mois'] == 2)) | ((df['Jour'] <= 13) & (df['Mois'] == 3))]
+
+# Compter le nombre de colis pour chaque gouvernorat pendant la période des Soldes d'hiver
+count_by_governorate_soldes_hiver = df_soldes_hiver.groupby('Gouvernorat').size().reset_index(name='Soldes-Hiver')
+
+# Fusionner avec le DataFrame d'origine pour inclure tous les gouvernorats
+merged_df = pd.merge(merged_df, count_by_governorate_soldes_hiver, on='Gouvernorat', how='left')
+
+# Remplacer les valeurs manquantes (gouvernorats sans colis pendant la période des Soldes d'hiver) par 0
+merged_df['Soldes-Hiver'].fillna(0, inplace=True)
+
+# Filtrer les données pour la période des Soldes d'été (7 août - 17 septembre)
+df_soldes_ete = df[((df['Jour'] >= 7) & (df['Mois'] == 8)) | ((df['Jour'] <= 17) & (df['Mois'] == 9))]
+
+# Compter le nombre de colis pour chaque gouvernorat pendant la période des Soldes d'été
+count_by_governorate_soldes_ete = df_soldes_ete.groupby('Gouvernorat').size().reset_index(name='Soldes-Été')
+
+# Fusionner avec le DataFrame d'origine pour inclure tous les gouvernorats
+merged_df = pd.merge(merged_df, count_by_governorate_soldes_ete, on='Gouvernorat', how='left')
+
+# Remplacer les valeurs manquantes (gouvernorats sans colis pendant la période des Soldes d'été) par 0
+merged_df['Soldes-Été'].fillna(0, inplace=True)
+
+# Filtrer les données pour la période de la fête des mères (12 mai - 26 mai)
+df_mothers_day = df[((df['Jour'] >= 12) & (df['Mois'] == 5)) | ((df['Jour'] <= 26) & (df['Mois'] == 5))]
+
+# Compter le nombre de colis pour chaque gouvernorat pendant la période de la fête des mères
+count_by_governorate_mothers_day = df_mothers_day.groupby('Gouvernorat').size().reset_index(name="Mother's-Day")
+
+# Fusionner avec le DataFrame d'origine pour inclure tous les gouvernorats
+merged_df = pd.merge(merged_df, count_by_governorate_mothers_day, on='Gouvernorat', how='left')
+
+# Remplacer les valeurs manquantes (gouvernorats sans colis pendant la période de la fête des mères) par 0
+merged_df["Mother's-Day"].fillna(0, inplace=True)
+
+# Filtrer les données pour la période de la Journée de la Femme (22 février - 8 mars)
+df_womens_day = df[((df['Jour'] >= 22) & (df['Mois'] == 2)) | ((df['Jour'] <= 8) & (df['Mois'] == 3))]
+
+# Compter le nombre de colis pour chaque gouvernorat pendant la période de la Journée de la Femme
+count_by_governorate_womens_day = df_womens_day.groupby('Gouvernorat').size().reset_index(name="Woman's-Day")
+
+# Fusionner avec le DataFrame d'origine pour inclure tous les gouvernorats
+merged_df = pd.merge(merged_df, count_by_governorate_womens_day, on='Gouvernorat', how='left')
+
+# Remplacer les valeurs manquantes (gouvernorats sans colis pendant la période de la Journée de la Femme) par 0
+merged_df["Woman's-Day"].fillna(0, inplace=True)
+
+# Filtrer les données pour la période de la fête des Pères (1er juin - 16 juin)
+df_fathers_day = df[((df['Jour'] >= 1) & (df['Mois'] == 6)) | ((df['Jour'] <= 16) & (df['Mois'] == 6))]
+
+# Compter le nombre de colis pour chaque gouvernorat pendant la période de la fête des Pères
+count_by_governorate_fathers_day = df_fathers_day.groupby('Gouvernorat').size().reset_index(name="Father's-Day")
+
+# Fusionner avec le DataFrame d'origine pour inclure tous les gouvernorats
+merged_df = pd.merge(merged_df, count_by_governorate_fathers_day, on='Gouvernorat', how='left')
+
+# Remplacer les valeurs manquantes (gouvernorats sans colis pendant la période de la fête des Pères) par 0
+merged_df["Father's-Day"].fillna(0, inplace=True)
+
+# Filtrer les données pour la période de Noël (10 décembre - 25 décembre)
+df_noel = df[((df['Jour'] >= 10) & (df['Mois'] == 12)) | ((df['Jour'] <= 25) & (df['Mois'] == 12))]
+
+# Compter le nombre de colis pour chaque gouvernorat pendant la période de Noël
+count_by_governorate_noel = df_noel.groupby('Gouvernorat').size().reset_index(name="Noël")
+
+# Fusionner avec le DataFrame d'origine pour inclure tous les gouvernorats
+merged_df = pd.merge(merged_df, count_by_governorate_noel, on='Gouvernorat', how='left')
+
+# Remplacer les valeurs manquantes (gouvernorats sans colis pendant la période de Noël) par 0
+merged_df['Noël'].fillna(0, inplace=True)
+
+# Afficher le résultat
+print(tabulate(merged_df[['Gouvernorat', 'Black-Friday', 'Saint-Valentin', 'Soldes-Hiver', 'Soldes-Été', "Mother's-Day", "Woman's-Day", "Father's-Day", 'Noël']], headers='keys', tablefmt='pretty'))
+
+# Save the merged DataFrame to a CSV file
+merged_df.to_csv('Hollydays.csv', index=False)
+
+# Print a message indicating that the file has been saved
+print("Merged data saved to 'Hollyda.csv'")
