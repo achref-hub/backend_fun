@@ -43,17 +43,21 @@ app.get('/', (req, res) =>{
 
 });
 
-const csvFilePath = './stats.csv';
-const tableName = 'stats_table';   
-
-importCSVToDatabase(csvFilePath, pool, tableName, (err, results) => { 
-    if (err) {
-        console.error('Error during CSV import:', err);
-    } else {
-        console.log('CSV import completed successfully', results);
-    }
-});
-
+//import data and save it to database
+app.post('/import-csv', (req, res) => {
+    importCSVToDatabase(
+      './stats.csv',
+      pool,
+      'states_table',
+      (err, results) => { 
+        if (err) {
+          res.status(500).send('Error during CSV import');
+        } else {
+          res.status(200).send('CSV import completed successfully');
+        }
+      }
+    );
+  });
 const port = 3000;
 app.listen(port , ()=>{
     console.log(`backend runing on port ${port}`);
