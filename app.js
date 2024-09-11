@@ -3,6 +3,7 @@ const app = express();
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
 const importCSVToDatabase = require('./ManageData/importCsv');
+const importHollydays = require('./ManageData/importHollydays');
 dotenv.config();
 // Middleware to parse JSON
 app.use(express.json());
@@ -44,11 +45,26 @@ app.get('/', (req, res) =>{
 });
 
 //import data and save it to database
-app.post('/import-csv', (req, res) => {
+app.post('/import-stats', (req, res) => {
     importCSVToDatabase(
       './stats.csv',
       pool,
       'states_table',
+      (err, results) => { 
+        if (err) {
+          res.status(500).send('Error during CSV import');
+        } else {
+          res.status(200).send('CSV import completed successfully');
+        }
+      }
+    );
+  });
+
+  app.post('/import-hollydays', (req, res) => {
+    importHollydays(
+      './Hollydays.csv',
+      pool,
+      'hollydays_table',
       (err, results) => { 
         if (err) {
           res.status(500).send('Error during CSV import');
