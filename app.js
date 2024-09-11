@@ -36,6 +36,7 @@ module.exports.pool = pool;
 // Define the POST route that uses the user controller to create a new user
 app.use("/api/user", require("./routes/user"));
 app.use("/api/authentication", require("./routes/authentification"));
+app.use("/api/data", require("./routes/data"));
 
 
 
