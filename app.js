@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
 const importCSVToDatabase = require('./ManageData/importCsv');
@@ -7,6 +8,13 @@ const importHollydays = require('./ManageData/importHollydays');
 dotenv.config();
 // Middleware to parse JSON
 app.use(express.json());
+
+// Enable CORS for all routes and specific origin
+app.use(cors({
+  origin: 'http://localhost:3001',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  
+  credentials: true 
+}));
 
 // Create a connection pool and export it for use in other modules
 const pool = mysql.createPool({
