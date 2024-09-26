@@ -42,7 +42,7 @@ module.exports = async function (req, res) {
         const token = jwt.sign(
             { id: user[0].id, email: user[0].email }, 
             JWT_SECRET, 
-            { expiresIn: '2h' } 
+            { expiresIn: '24h' } 
         );
 
         // Return response with user details and JWT token

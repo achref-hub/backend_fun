@@ -1,39 +1,33 @@
-const {pool} = require('../app');
+const { pool } = require('../app');
 
-module.exports = async function (req, res){
-    const userId = req.params.id;
+module.exports = async function (req, res) {
+    // Retrieve user info from the JWT token (set in req.user by the verifyToken middleware)
+    const userId = req.user.id;
 
-    if (!userId) {
-        return res.status(400).json({
-            success: false,
-            message: 'User ID is required'
-        });
-    }
+    try {
+        // Get a connection from the pool
+        const connection = await pool.getConnection();
+        const getOneUser = `SELECT * FROM user WHERE id = ?`;
+        const [user] = await connection.execute(getOneUser, [userId]);
+        connection.release(); // Release the connection back to the pool
 
-    try{
-         // Get a connection from the pool
-         const connection = await pool.getConnection();
-         const getOneUser = `SELECT * FROM user WHERE id = ?`
-         const[user] = await connection.execute(getOneUser, [userId]);
-         // Release the connection back to the pool
-         connection.release();
-
-         if (user.length === 0) {
+        if (user.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: 'User not found'
+                message: 'User not found',
             });
         }
-         return res.status(200).json({
+
+        return res.status(200).json({
             success: true,
-            message: 'user retrieved successfully',
-            user: user[0] 
+            message: 'User retrieved successfully',
+            user: user[0], // Return the user data
         });
-    }catch(err){
+    } catch (err) {
         console.error("Error getting user:", err);
         res.status(500).json({
-            success :false,
-            message :err.message
-        })
+            success: false,
+            message: err.message,
+        });
     }
 };

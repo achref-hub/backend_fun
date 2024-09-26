@@ -14,7 +14,6 @@ module.exports = async function (req, res) {
         });
     }
     
-
     try {
         // Get a connection from the pool
         const connection = await pool.getConnection();
@@ -25,8 +24,9 @@ module.exports = async function (req, res) {
 
         // Release the connection back to the pool
         connection.release();
+
         // Check if user exists
-        if (rows[0].length === 0) {
+        if (rows.length === 0) {
             return res.status(401).json({
                 success: false,
                 message: 'Invalid email or password'
@@ -43,13 +43,18 @@ module.exports = async function (req, res) {
                 message: 'Invalid email or password'
             });
         }
-         // Generate JWT Token upon successful sign-in
-         const token = jwt.sign(
+
+        // Check JWT_SECRET
+        if (!JWT_SECRET) {
+            throw new Error('JWT_SECRET is not defined');
+        }
+
+        // Generate JWT Token upon successful sign-in
+        const token = jwt.sign(
             { id: user.id, email: user.email },
             JWT_SECRET,
-            { expiresIn: '2h' } 
+            { expiresIn: '24h' }
         );
-
 
         return res.status(200).json({
             success: true,

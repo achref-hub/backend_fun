@@ -8,8 +8,8 @@ const auth = require('../authentication/authMiddleware');
 router.post("/sign-in", signIn);
 router.post("/sign-up", signUp);
 
-// Protected route example (must be authenticated)
-router.get("/protected", auth, (req, res) => {
-    res.json({ success: true, message: "You have access to this protected route", user: req.user });
+// Protected route to get the logged-in user's details
+router.get("/profile", auth, (req, res) => {
+    res.json({ success: true, message: "Authenticated user", user: req.user });
 });
 module.exports = router;
